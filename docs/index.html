@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Sign in to your laboratory workspace to manage samples, testing, review and certificates.">
+  <meta name="referrer" content="no-referrer">
+  
+  <title>Laboratory workspace — Sign in</title>
+  <style>
+    :root{color-scheme:light;--ink:#172e3b;--muted:#65757f;--teal:#08786e;--teal-dark:#055e57;--line:#dce4e7;--paper:#fff;--soft:#f4f8f8;--danger:#aa3041;--radius:12px}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}button,input,summary{font:inherit}button,a,summary{-webkit-tap-highlight-color:transparent}button{cursor:pointer}button:disabled{cursor:wait}a{color:var(--teal)}button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid #54b9b0;outline-offset:4px}button{color:inherit}button svg{pointer-events:none}svg{display:block;flex:none}p,h1,h2,h3{margin:0}button{border:0} [hidden]{display:none!important}
+    .shell{min-height:100svh;display:grid;grid-template-columns:minmax(0,46%) minmax(0,54%)}
+    .story{position:relative;overflow:hidden;background:#102f3b;color:white;display:flex;flex-direction:column;padding:44px clamp(32px,4.4vw,76px) 30px;isolation:isolate}
+    .story:before{content:"";position:absolute;z-index:-1;inset:0;background:radial-gradient(ellipse at 105% 68%,#14565f 0,transparent 63%),linear-gradient(145deg,#102732,#10333f)}
+    .brand{display:flex;align-items:center;gap:12px;min-width:0}.brand-mark{height:43px;width:43px;border:1px solid #4b6e78;border-radius:12px;background:#ffffff09;display:grid;place-items:center;color:#90e7cf}.brand-name{font-size:21px;font-weight:650;letter-spacing:-.6px;overflow-wrap:anywhere}.brand-caption{color:#a1b5bd;font-size:12px;letter-spacing:1.55px;margin-top:1px;font-weight:500}
+    .story-main{margin:auto 0;padding:62px 0 52px;max-width:520px;width:100%}.eyebrow{display:flex;align-items:center;gap:8px;color:#9ad6c9;font-size:12px;font-weight:600;letter-spacing:1.8px;text-transform:uppercase;margin-bottom:22px}.eyebrow:before{content:"";height:1px;width:23px;background:currentColor}.story h1{font-size:clamp(34px,3.7vw,57px);line-height:1.12;letter-spacing:-2px;font-weight:600;max-width:480px}.story h1 span{color:#92dfcd}.story-copy{color:#b9cbd0;line-height:1.75;margin-top:23px;max-width:400px;font-size:16px}
+    .sample-card{margin-top:40px;padding:22px;background:#ffffff08;border:1px solid #ffffff23;border-radius:16px;box-shadow:0 16px 45px #00101620}.sample-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:21px}.sample-top strong{font-size:14px;font-weight:500}.sample-top span{font-size:12px;letter-spacing:.4px;color:#a9c1c8}.sample-heading{display:flex;gap:11px;align-items:center}.sample-icon{display:grid;place-items:center;border:1px solid #ffffff1c;border-radius:10px;width:42px;height:42px;color:#a5e2d3;background:#ffffff06}.sample-heading h3{font-size:15px;font-weight:500}.sample-heading p{font-size:12px;color:#9bb6bf;margin-top:3px}.sample-status{font-size:12px;color:#a8e7d5;background:#1c605d;padding:5px 9px;border-radius:6px;white-space:nowrap;margin-left:auto}
+    .workflow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));list-style:none;margin:28px 0 0;padding:0}.workflow li{position:relative;color:#aac0c7;font-size:12px}.workflow li:after{position:absolute;content:"";height:1px;left:26px;right:8px;top:11px;background:#ffffff22}.workflow li:last-child:after{display:none}.step{display:grid;place-items:center;width:23px;height:23px;border-radius:50%;margin-bottom:10px;border:1px solid #718a94;color:#b9ccd2;font-size:11px}.complete .step{background:#93deca;border-color:#93deca;color:#123c3d}.active .step{background:#ffffff0a;border-color:#a2e2d1;box-shadow:0 0 0 4px #9ddfcd14;color:#c6f1e3}.workflow .active{color:#e2f6f0}.story-note{display:flex;align-items:center;gap:8px;color:#a6bfc6;font-size:13px;margin-top:22px}.story-footer{padding-top:20px;border-top:1px solid #ffffff15;display:flex;gap:14px;justify-content:space-between;align-items:center;color:#96afb9;font-size:12px}.story-footer span:last-child{color:#b9cdd3}
+    .entry{min-width:0;display:flex;flex-direction:column;padding:36px clamp(28px,4.5vw,78px) 24px}.topbar{display:flex;align-items:center;justify-content:flex-end;min-height:38px;gap:12px;color:var(--muted);font-size:14px}.link-button{background:none;color:var(--teal);padding:4px 0;font-weight:600;font-size:14px}.help-button{display:flex;align-items:center;gap:7px;color:#62727c;background:none;font-size:14px;padding:8px 0}
+    .form-wrap{width:100%;max-width:428px;margin:auto; padding:58px 0 45px}.form-eyebrow{font-size:12px;font-weight:600;letter-spacing:1.6px;color:var(--teal);margin-bottom:12px;text-transform:uppercase}.form-wrap h2{font-size:36px;line-height:1.2;letter-spacing:-1.3px;font-weight:650}.sub{font-size:15px;color:var(--muted);margin-top:12px;line-height:1.6}.portal-group{border:0;padding:0;margin:29px 0 22px;min-width:0}.portal-group legend{font-size:14px;font-weight:550;padding:0;margin-bottom:10px}.portals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.portal{position:relative;cursor:pointer;display:block}.portal input{position:absolute;opacity:0;width:1px;height:1px}.portal-box{min-height:82px;padding:13px 10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line);border-radius:var(--radius);color:#647681;font-size:14px;font-weight:500;transition:background .15s,border-color .15s}.portal input:checked+.portal-box{background:#edf7f4;color:#07695f;border:1.5px solid #278d80;padding:12.5px 9.5px}.portal input:focus-visible+.portal-box{outline:3px solid #54b9b0;outline-offset:3px}.portal:hover .portal-box{background:#f4f9f8}.portal-check{display:none;position:absolute;top:7px;right:7px;background:var(--teal);color:white;border-radius:50%;width:12px;height:12px;place-items:center}.portal input:checked~.portal-check{display:grid}.portal-description{font-size:13px;color:var(--muted);margin-top:10px;min-height:20px}
+    .field{margin-top:19px}.field label,.field-head label{font-size:14px;font-weight:550;display:block;margin-bottom:8px}.field-head{display:flex;align-items:center;justify-content:space-between;gap:12px}.field-head .link-button{font-size:13px;padding:0 0 8px;font-weight:500}.input-wrap{position:relative}.input-icon{position:absolute;left:15px;top:17px;color:#86969e;pointer-events:none}.field input{width:100%;min-width:0;height:52px;border:1px solid #d8e1e5;border-radius:9px;background:white;color:var(--ink);padding:12px 15px;transition:border-color .15s;font-size:16px}.field input.has-icon{padding-left:44px}.field input[type=password],.field input.password{padding-right:51px}.field input::placeholder{color:#89959d;font-size:14px}.field input:hover{border-color:#acbdc5}.field input:focus{border-color:var(--teal)}.field input[aria-invalid=true]{border-color:var(--danger)}.password-toggle{position:absolute;right:5px;top:5px;height:42px;width:42px;display:grid;place-items:center;border-radius:6px;background:transparent;color:#7a8c96}.password-toggle:hover{background:var(--soft)}.field-hint{font-size:12px;color:var(--muted);margin-top:6px}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.inline-note{font-size:13px;background:var(--soft);color:#536976;line-height:1.6;padding:12px 14px;border-radius:8px;margin-top:10px}.message{font-size:14px;line-height:1.5;padding:12px 14px;background:#fff0f2;border:1px solid #f0d3da;border-radius:8px;color:#9a283d;margin-top:16px}.message:empty{display:none}.message.info{color:#155f70;background:#eef7fa;border-color:#cfe5eb}
+    .primary{width:100%;min-height:52px;padding:13px 20px;border-radius:9px;background:var(--teal);color:#fff;font-size:15px;font-weight:600;display:flex;justify-content:center;align-items:center;gap:12px;margin-top:25px;box-shadow:0 3px 5px #086a6510;transition:background .15s,transform .15s}.primary:hover{background:var(--teal-dark);transform:translateY(-1px)}.primary:active{transform:translateY(0)}.primary:disabled{opacity:.65;transform:none}.approval-note{display:flex;gap:7px;align-items:center;justify-content:center;color:#7b8991;font-size:12px;margin-top:16px}.approval-note svg{width:13px;height:13px}.divider{height:1px;background:#e7edef;margin:27px 0 20px}.request-line{font-size:14px;color:var(--muted);text-align:center}.request-line .link-button{margin-left:3px}.demo{margin-top:26px;border:1px solid #e2e9ec;border-radius:10px;background:#fafcfc}.demo summary{padding:13px 15px;color:#586e79;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:9px;list-style:none}.demo summary::-webkit-details-marker{display:none}.demo summary .chevron{margin-left:auto;transition:transform .15s}.demo[open] summary .chevron{transform:rotate(180deg)}.demo-body{padding:0 15px 15px;border-top:1px solid #e6edef}.demo-body p{font-size:12px;color:var(--muted);margin:12px 0}.demo-grid{display:flex;flex-wrap:wrap;gap:6px}.demo-grid button{border:1px solid var(--line);border-radius:6px;padding:6px 9px;font-size:12px;background:white;color:#476573}.demo-grid button:hover{border-color:var(--teal);color:var(--teal)}.entry-footer{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#819099;max-width:520px;width:100%;margin:0 auto;align-items:center}.footer-label{display:flex;align-items:center;gap:6px}.preview-notice{font-size:12px;line-height:1.6;border:1px solid #d3e6e7;background:#f2faf9;color:#416973;border-radius:8px;padding:10px 12px;margin-bottom:25px}.success-icon{width:54px;height:54px;border-radius:50%;background:#e5f5ed;display:grid;place-items:center;color:var(--teal);margin-bottom:22px}.back-link{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:17px;min-height:40px}.mobile-brand{display:none}.no-script{padding:20px;background:#fff0dc;color:#6e4314}.reg-portals{grid-template-columns:1fr 1fr}.reg-portals .portal-box{min-height:66px;flex-direction:row}.registration .portal-group{margin:22px 0 4px}.registration .sub{font-size:14px}.registration .field{margin-top:14px}.registration h2{font-size:32px}.registration .primary{margin-top:20px}#orgHint{margin:8px 0 0}
+    @media(min-width:1500px){.story-main{max-width:550px}.entry{padding-right:7vw;padding-left:7vw}}
+    @media(max-width:1100px){.story{padding:34px 30px 25px}.entry{padding:30px 32px 22px}.story h1{font-size:43px}.story-main{padding:54px 0 38px}.sample-card{padding:17px}.sample-status{font-size:11px}.sample-heading h3{font-size:14px}.brand-name{font-size:19px}.story-footer{flex-direction:column;align-items:flex-start;gap:6px}}
+    @media(max-width:800px){.shell{grid-template-columns:1fr}.story{display:none}.entry{min-height:100svh;padding:24px 26px}.topbar{justify-content:space-between}.mobile-brand{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:650;letter-spacing:-.4px;color:var(--ink);min-width:0}.mobile-brand span{overflow-wrap:anywhere}.mobile-brand .brand-mark{width:34px;height:34px;border-color:#d5e7e4;background:#eff8f5;color:var(--teal);border-radius:9px}.form-wrap{padding:42px 0;max-width:440px}.form-wrap h2{font-size:34px}.entry-footer{max-width:440px}.topbar .help-button{font-size:13px;flex:none}}
+    @media(max-width:390px){.entry{padding:20px}.form-wrap{padding:32px 0}.form-wrap h2{font-size:31px}.field-row{grid-template-columns:1fr;gap:0}.entry-footer{flex-direction:column;align-items:flex-start;gap:7px}.portal-box{padding-left:6px;padding-right:6px}.brand-caption{letter-spacing:.8px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+  </style>
+<meta name="referrer" content="no-referrer">
+<script src="assets/config.js"></script>
+<script src="assets/api.js"></script>
+</head>
+<body>
+  <svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><defs>
+    <symbol id="i-lab" viewBox="0 0 24 24"><path d="M9 3h6m-5 0v6l-5.7 9.5A2.3 2.3 0 0 0 6.3 22h11.4a2.3 2.3 0 0 0 2-3.5L14 9V3M8 15h8"/></symbol>
+    <symbol id="i-staff" viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3m1-17a3 3 0 0 1 0 6m2 4a5 5 0 0 1 3 4v3"/></symbol>
+    <symbol id="i-client" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="14" rx="2"/><path d="M9 7V3h6v4M8 11h1m6 0h1m-8 4h1m6 0h1m-5 6v-3h2v3"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6zM9 12l2 2 4-4"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="m4 7 8 6 8-6"/></symbol>
+    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4.5 1.5c-1 .8-2 1-2 2.5m0 3h.01"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+  </defs></svg>
+  <noscript><p class="no-script">Enable JavaScript to sign in to your laboratory workspace.</p></noscript>
+  <div class="shell">
+    <aside class="story" aria-label="About your laboratory workspace">
+      <div class="brand"><div class="brand-mark"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-lab"/></svg></div><div><div class="brand-name"><span data-lab-name>Laboratory</span></div><div class="brand-caption">LABORATORY WORKSPACE</div></div></div>
+      <div class="story-main">
+        <p class="eyebrow">Connected from start to finish</p>
+        <h1>Every sample.<br>Every step.<br><span>One workspace.</span></h1>
+        <p class="story-copy">Bring your laboratory together. Track samples, manage testing and share results from one organised place.</p>
+        <div class="sample-card">
+          <div class="sample-top"><strong>A clearer path from sample to report</strong><span>EXAMPLE</span></div>
+          <div class="sample-heading"><div class="sample-icon"><svg width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-lab"/></svg></div><div><h3>Water quality analysis</h3><p>SAMPLE · S-2026-001</p></div><span class="sample-status">In review</span></div>
+          <ol class="workflow" aria-label="Example workflow: received, tested, in review, then reported">
+            <li class="complete"><span class="step" aria-hidden="true">✓</span>Received</li><li class="complete"><span class="step" aria-hidden="true">✓</span>Tested</li><li class="active"><span class="step" aria-hidden="true">3</span>Reviewed</li><li><span class="step" aria-hidden="true">4</span>Reported</li>
+          </ol>
+        </div>
+        <p class="story-note"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" aria-hidden="true"><use href="#i-staff"/></svg>Built around your team, clients and workflow.</p>
+      </div>
+      <div class="story-footer"><span>Laboratory Information Management System</span><span>From sample to certificate.</span></div>
+    </aside>
+    <main class="entry">
+      <div class="topbar"><div class="mobile-brand"><div class="brand-mark"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-lab"/></svg></div><span><span data-lab-name>Laboratory</span></span></div><button type="button" id="helpToggle" class="help-button" aria-expanded="false" aria-controls="helpNote"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><use href="#i-help"/></svg>Need help?</button></div>
+      <div class="form-wrap">
+        <p id="previewNotice" class="preview-notice" hidden>Sign-in is not configured yet. Please contact your laboratory administrator.</p>
+        <p id="helpNote" class="inline-note" hidden>For sign-in help, contact your laboratory administrator. They can approve account requests and reset passwords in Admin → Users.</p>
+        <section id="loginPanel" aria-labelledby="loginHeading">
+          <p class="form-eyebrow">Your laboratory, connected</p>
+          <h2 id="loginHeading" tabindex="-1">Welcome back.</h2>
+          <p class="sub">Sign in to your laboratory workspace.</p>
+          <form id="loginForm">
+            <fieldset class="portal-group"><legend>Choose your portal</legend><div class="portals">
+              <label class="portal"><input type="radio" name="portal" value="Staff" checked><span class="portal-box"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-staff"/></svg>Staff</span><span class="portal-check" aria-hidden="true">✓</span></label>
+              <label class="portal"><input type="radio" name="portal" value="Client"><span class="portal-box"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-client"/></svg>Client</span><span class="portal-check" aria-hidden="true">✓</span></label>
+              <label class="portal"><input type="radio" name="portal" value="Admin"><span class="portal-box"><svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-shield"/></svg>Admin</span><span class="portal-check" aria-hidden="true">✓</span></label>
+            </div><p id="portalDescription" class="portal-description" aria-live="polite">Samples, testing, review and quality records.</p></fieldset>
+            <div class="field"><label for="email">Email address</label><div class="input-wrap"><svg class="input-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><use href="#i-mail"/></svg><input class="has-icon" id="email" name="email" type="email" autocomplete="username" placeholder="you@laboratory.com" required maxlength="254" spellcheck="false" autocapitalize="none"></div></div>
+            <div class="field"><div class="field-head"><label for="pw">Password</label><button type="button" id="forgotToggle" class="link-button" aria-expanded="false" aria-controls="forgotNote">Forgot password?</button></div><div class="input-wrap"><svg class="input-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><use href="#i-lock"/></svg><input class="has-icon password" id="pw" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required><button type="button" class="password-toggle" data-toggle-password="pw" aria-label="Show password" aria-pressed="false"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><use href="#i-eye"/></svg></button></div></div>
+            <p id="forgotNote" class="inline-note" hidden>Ask your laboratory administrator to reset your password. Password reset by email is not available for this workspace.</p>
+            <div class="message" id="loginMessage" role="status" aria-live="polite"></div>
+            <button class="primary" id="go" type="submit"><span>Sign in to workspace</span><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+            <p class="approval-note"><svg fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><use href="#i-lock"/></svg>Access is based on your account and role.</p>
+          </form>
+          <div class="divider"></div><p class="request-line">New to the workspace? <button type="button" class="link-button" id="showReg">Request an account</button></p>
+
+        </section>
+        <section id="regPanel" class="registration" aria-labelledby="regHeading" hidden>
+          <p class="form-eyebrow">Join your laboratory workspace</p><h2 id="regHeading" tabindex="-1">Request an account.</h2><p class="sub">Your laboratory administrator will review and approve your request before you can sign in.</p>
+          <form id="regForm">
+            <fieldset class="portal-group"><legend>Account type</legend><div class="portals reg-portals"><label class="portal"><input type="radio" name="regPortal" value="Staff" checked><span class="portal-box"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><use href="#i-staff"/></svg>Laboratory staff</span></label><label class="portal"><input type="radio" name="regPortal" value="Client"><span class="portal-box"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><use href="#i-client"/></svg>Client</span></label></div></fieldset>
+            <div class="field"><label for="rname">Full name</label><input id="rname" name="name" autocomplete="name" placeholder="Your full name" minlength="2" maxlength="150" required></div>
+            <div class="field"><label for="remail">Email address</label><input id="remail" name="email" type="email" autocomplete="email" placeholder="you@organisation.com" maxlength="254" required spellcheck="false" autocapitalize="none"></div>
+            <div id="clientFields" hidden><div class="field"><label for="rorg">Organisation</label><input id="rorg" name="organisation" list="orgs" autocomplete="organization" placeholder="Choose or enter your organisation" maxlength="200" disabled><datalist id="orgs"></datalist><p id="orgHint" class="field-hint" aria-live="polite"></p></div><div class="field"><label for="rphone">Phone <span class="field-hint">(optional)</span></label><input id="rphone" name="phone" type="tel" autocomplete="tel" placeholder="Contact number" maxlength="50" disabled></div><div class="field"><label for="raddr">Address <span class="field-hint">(optional)</span></label><input id="raddr" name="address" autocomplete="street-address" placeholder="Organisation address" maxlength="400" disabled></div></div>
+            <div class="field-row"><div class="field"><label for="rpw">Password</label><div class="input-wrap"><input id="rpw" class="password" name="password" type="password" minlength="8" autocomplete="new-password" placeholder="8+ characters" required aria-describedby="passwordHint"><button type="button" class="password-toggle" data-toggle-password="rpw" aria-label="Show new password" aria-pressed="false"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><use href="#i-eye"/></svg></button></div></div><div class="field"><label for="rpw2">Confirm password</label><input id="rpw2" name="passwordConfirm" type="password" minlength="8" autocomplete="new-password" placeholder="Repeat password" required></div></div><p class="field-hint" id="passwordHint">Use at least 8 characters.</p>
+            <div class="message" id="regMessage" role="status" aria-live="polite"></div><button class="primary" id="rgo" type="submit"><span>Request account</span><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+          </form><button type="button" class="link-button back-link" id="showLogin">Back to sign in</button>
+        </section>
+        <section id="successPanel" aria-labelledby="successHeading" hidden><div class="success-icon"><svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><use href="#i-check"/></svg></div><p class="form-eyebrow">Awaiting administrator approval</p><h2 id="successHeading" tabindex="-1">Request received.</h2><p class="sub">Once your laboratory administrator activates your account, you can sign in with the email address and password you chose.</p><button type="button" class="primary" id="successBack">Back to sign in</button></section>
+      </div>
+      <footer class="entry-footer"><span>Laboratory workspace</span><span class="footer-label"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><use href="#i-shield"/></svg>Staff · Clients · Administrators</span></footer>
+    </main>
+  </div>
+  <script>
+    (function () {
+      'use strict';
+      const $ = id => document.getElementById(id);
+      const hasBackend = LimsAPI.isConfigured();
+      
+      const descriptions = {Staff:'Samples, testing, review and quality records.',Client:'Your samples, approved results and certificates.',Admin:'System settings, users and laboratory administration.'};
+
+      let loginBusy = false, registrationBusy = false, organizationsLoaded = false;
+      $('previewNotice').hidden = hasBackend;
+      function portal() { return document.querySelector('input[name="portal"]:checked').value; }
+      function registrationPortal() { return document.querySelector('input[name="regPortal"]:checked').value; }
+      function message(id, value, info) { const el = $(id); el.textContent = value || ''; el.classList.toggle('info', !!info); }
+      function errorText(error) { return (error && error.message ? String(error.message) : 'Something went wrong. Please try again.').replace(/^Exception:\s*/, ''); }
+      function setBusy(kind, busy) {
+        const login = kind === 'login';
+        if (login) loginBusy = busy; else registrationBusy = busy;
+        const form = $(login ? 'loginForm' : 'regForm');
+        form.setAttribute('aria-busy', String(busy));
+        form.querySelectorAll('input,button').forEach(control => { control.disabled = busy; });
+        if (!login && !busy) syncClientFields();
+        $(login ? 'showReg' : 'showLogin').disabled = busy;
+        document.querySelectorAll('[data-demo]').forEach(button => { button.disabled = loginBusy; });
+        $(login ? 'go' : 'rgo').querySelector('span').textContent = busy ? (login ? 'Signing in…' : 'Submitting request…') : (login ? 'Sign in to workspace' : 'Request account');
+      }
+      function showPanel(panel) {
+        if (loginBusy || registrationBusy) return;
+        ['loginPanel','regPanel','successPanel'].forEach(id => { $(id).hidden = id !== panel; });
+        message('loginMessage',''); message('regMessage','');
+        $('pw').value = ''; $('rpw').value = ''; $('rpw2').value = ''; $('rpw2').setCustomValidity('');
+        document.querySelectorAll('[data-toggle-password]').forEach(button => { $(button.dataset.togglePassword).type = 'password'; button.setAttribute('aria-pressed','false'); button.setAttribute('aria-label', button.dataset.togglePassword === 'rpw' ? 'Show new password' : 'Show password'); });
+        $(panel === 'loginPanel' ? 'loginHeading' : panel === 'regPanel' ? 'regHeading' : 'successHeading').focus();
+        if (panel === 'regPanel') syncClientFields();
+      }
+      function toggleNote(buttonId, noteId) {
+        $(buttonId).addEventListener('click', () => { const note = $(noteId); note.hidden = !note.hidden; $(buttonId).setAttribute('aria-expanded',String(!note.hidden)); });
+      }
+      toggleNote('helpToggle','helpNote'); toggleNote('forgotToggle','forgotNote');
+      document.querySelectorAll('input[name="portal"]').forEach(input => input.addEventListener('change', () => { $('portalDescription').textContent = descriptions[portal()]; message('loginMessage',''); }));
+      document.querySelectorAll('[data-toggle-password]').forEach(button => button.addEventListener('click', () => { const field = $(button.dataset.togglePassword); const reveal = field.type === 'password'; field.type = reveal ? 'text' : 'password'; button.setAttribute('aria-pressed',String(reveal)); button.setAttribute('aria-label', (reveal ? 'Hide ' : 'Show ') + (field.id === 'rpw' ? 'new password' : 'password')); }));
+
+      $('loginForm').addEventListener('submit', event => {
+        event.preventDefault(); if (loginBusy) return;
+        message('loginMessage','');
+        if (!hasBackend) { message('loginMessage','Sign-in is not configured. Please contact your laboratory administrator.',true); return; }
+        const email = $('email').value.trim(), password = $('pw').value, selectedPortal = portal();
+        setBusy('login',true);
+        const fail = error => { setBusy('login',false); message('loginMessage',errorText(error)); };
+        try {
+          LimsAPI.publicCall('login',email,password,selectedPortal).then(result => {
+            try {
+              if (!result || typeof result.token !== 'string' || !result.token) throw new Error('No session was returned. Please try again.');
+              LimsAPI.saveSession(result);
+              $('pw').value = '';
+              LimsAPI.openPortal(result.portal);
+            } catch (error) { fail(error); }
+          }).catch(fail);
+        } catch (error) { fail(error); }
+      });
+      function loadOrganizations() {
+        if (organizationsLoaded || !hasBackend) return;
+        organizationsLoaded = true; $('orgHint').textContent = 'Loading organisations…';
+        const fail = () => { organizationsLoaded = false; $('orgHint').textContent = 'Suggestions are unavailable. You can still type your organisation name.'; };
+        try {
+          LimsAPI.publicCall('publicClients').then(list => {
+            $('orgs').replaceChildren();
+            if (!Array.isArray(list)) { fail(); return; }
+            list.forEach(name => { const option = document.createElement('option'); option.value = String(name); $('orgs').appendChild(option); });
+            $('orgHint').textContent = 'Enter the organisation name registered with your laboratory.';
+          }).catch(fail);
+        } catch (error) { fail(); }
+      }
+      function syncClientFields() {
+        const client = registrationPortal() === 'Client'; $('clientFields').hidden = !client;
+        ['rorg','rphone','raddr'].forEach(id => { $(id).disabled = !client || registrationBusy; });
+        $('rorg').required = client;
+        if (client) loadOrganizations();
+      }
+      document.querySelectorAll('input[name="regPortal"]').forEach(input => input.addEventListener('change',syncClientFields));
+      $('showReg').addEventListener('click', () => showPanel('regPanel'));
+      $('showLogin').addEventListener('click', () => showPanel('loginPanel'));
+      $('successBack').addEventListener('click', () => showPanel('loginPanel'));
+      function validatePasswords() { $('rpw2').setCustomValidity($('rpw2').value && $('rpw2').value !== $('rpw').value ? 'Passwords do not match.' : ''); }
+      ['rpw','rpw2'].forEach(id => $(id).addEventListener('input',validatePasswords));
+      $('regForm').addEventListener('submit', event => {
+        event.preventDefault(); if (registrationBusy) return;
+        message('regMessage',''); validatePasswords(); if (!$('regForm').reportValidity()) return;
+        if ($('rname').value.trim().length < 2) { message('regMessage','Enter your full name.'); $('rname').focus(); return; }
+        const client = registrationPortal() === 'Client';
+        if (client && !$('rorg').value.trim()) { message('regMessage','Enter your organisation name.'); $('rorg').focus(); return; }
+        if (!hasBackend) { message('regMessage','Account requests are not configured. Please contact your laboratory administrator.',true); return; }
+        const request = {portal:registrationPortal(),name:$('rname').value.trim(),email:$('remail').value.trim(),password:$('rpw').value,client:client ? $('rorg').value.trim() : '',phone:client ? $('rphone').value.trim() : '',address:client ? $('raddr').value.trim() : ''};
+        setBusy('registration',true);
+        const fail = error => { setBusy('registration',false); message('regMessage',errorText(error)); };
+        try {
+          LimsAPI.publicCall('register',request).then(result => {
+            if (result !== true) { fail(new Error('The request could not be confirmed. Please contact your administrator.')); return; }
+            const email = request.email, requestedPortal = request.portal; setBusy('registration',false);
+            $('regForm').reset(); syncClientFields(); $('email').value = email;
+            const input = document.querySelector('input[name="portal"][value="'+requestedPortal+'"]'); input.checked = true; input.dispatchEvent(new Event('change'));
+            showPanel('successPanel');
+          }).catch(fail);
+        } catch (error) { fail(error); }
+      });
+      ['email','pw'].forEach(id => $(id).addEventListener('input', () => message('loginMessage','')));
+    }());
+  </script>
+</body>
+</html>

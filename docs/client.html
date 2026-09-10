@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta name="viewport" content="width=device-width, initial-scale=1"><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+ :root{--navy:#1B2A47;--navy-head:#23395B;--teal:#2A8A7C;--teal-soft:#D9EFEA;--bg:#F3F5F7;--line:#DDE3EA;--ink:#1B2433;--muted:#6B7686;--amber-soft:#FBEFD3;--red:#B23A3A;--red-soft:#F8DEDE;--green-soft:#DFF1E5}
+ *{box-sizing:border-box}body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+ button,input,select,textarea{font:inherit}
+ header{background:var(--navy);color:#fff;padding:0 32px;display:flex;align-items:center;gap:28px;height:60px}
+ .brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:17px}.brand i{width:12px;height:12px;border-radius:50%;background:var(--teal)}
+ nav{display:flex;gap:4px;height:100%}nav button{background:none;border:0;color:#C9D1DE;padding:0 14px;cursor:pointer;border-bottom:3px solid transparent}nav button.on{color:#fff;border-color:var(--teal)}
+ .me{margin-left:auto;display:flex;gap:12px;align-items:center;font-size:13px;color:#C9D1DE}.me b{color:#fff}
+ .main{max-width:1080px;margin:0 auto;padding:28px 24px}
+ h1{font-size:22px;margin:0 0 4px}.sub{color:var(--muted)}.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+ .btn{background:var(--teal);color:#fff;border:0;border-radius:6px;padding:8px 14px;font-weight:500;cursor:pointer}.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}.btn.sm{padding:4px 10px;font-size:12.5px}.btn:disabled{opacity:.5}
+ .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
+ .tile{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 16px}.tile b{display:block;font-size:26px;font-weight:600}.tile span{color:var(--muted);font-size:13px}
+ .panel{background:#fff;border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin-bottom:16px}.panel h2{font-size:15px;margin:0 0 12px;display:flex;align-items:center;gap:8px}.panel h2 small{color:var(--muted);font-weight:400}.panel h2 .btn{margin-left:auto}
+ table{width:100%;border-collapse:collapse}th{text-align:left;color:var(--muted);font-weight:500;font-size:12.5px;padding:8px 10px;border-bottom:1px solid var(--line)}td{padding:8px 10px;border-bottom:1px solid #EEF1F4}tr:last-child td{border:0}
+ tr.click{cursor:pointer}tr.click:hover td{background:#F7FAF9}.wrap{overflow-x:auto}.num{text-align:right}
+ .tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap}
+ .t-teal{background:var(--teal-soft);color:#1E6B60}.t-amber{background:var(--amber-soft);color:#7A4E0E}.t-red{background:var(--red-soft);color:var(--red)}.t-green{background:var(--green-soft);color:#2F7D4F}.t-grey{background:#E9EDF1;color:#4E5A6A}
+ .empty{color:var(--muted);padding:10px 0}
+ .steps{display:flex;gap:0;margin:8px 0 16px}.steps div{flex:1;text-align:center;padding:8px 4px;font-size:12px;color:var(--muted);border-bottom:3px solid #E9EDF1}.steps div.done{border-color:var(--teal);color:var(--ink)}.steps div.now{border-color:var(--teal);color:#1E6B60;font-weight:600}
+ .kv{display:grid;grid-template-columns:130px 1fr;gap:4px 12px}.kv dt{color:var(--muted)}.kv dd{margin:0}
+ .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+ label{display:block;margin:10px 0 4px;font-size:13px;color:var(--muted)}input,select,textarea{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px}
+ .chk{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px}.chk label{margin:0;display:flex;gap:8px;align-items:center;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:8px}.chk input{width:auto}
+ .hint{background:var(--teal-soft);border-radius:6px;padding:8px 10px;margin-top:12px;font-size:13px}
+ .toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:6px;display:none;z-index:20}.toast.err{background:var(--red)}
+ .loading{color:var(--muted);padding:40px 0;text-align:center}
+ @media(max-width:760px){header{padding:0 14px;gap:12px;overflow-x:auto}.grid2{grid-template-columns:1fr}.me span{display:none}}
+</style><meta name="referrer" content="no-referrer">
+<script src="assets/config.js"></script>
+<script src="assets/api.js"></script>
+</head><body>
+<header><div class="brand"><i></i><span data-lab-name>Laboratory</span></div><nav id="nav"></nav><div class="me" id="me"></div></header>
+<div class="main" id="main"><div class="loading">Loading…</div></div>
+<div class="toast" id="toast"></div>
+<script>
+const APP=new URL('index.html',location.href).href;let ctx,home,page='home';
+const $=id=>document.getElementById(id);const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const run=(fn,...a)=>LimsAPI.call(fn,...a);
+function toast(m,err){const t=$('toast');t.textContent=m;t.className='toast'+(err?' err':'');t.style.display='block';setTimeout(()=>t.style.display='none',err?5000:2500);}
+const fail=e=>toast(e.message||String(e),true);
+function tag(v){const s=String(v||'');const c=/out of s|overdue|open$/i.test(s)?'t-red':/requested|awaiting|received/i.test(s)?'t-amber':/reported|complies|issued|resolved|approved/i.test(s)?'t-green':/progress/i.test(s)?'t-teal':'t-grey';return`<span class="tag ${c}">${esc(s)}</span>`;}
+const STAGES=['Requested','Received','In Progress','Awaiting Review','Approved','Reported'];
+function steps(st){const i=STAGES.indexOf(st);return`<div class="steps">${STAGES.map((s,k)=>`<div class="${k<i?'done':k===i?'now':''}">${s==='Awaiting Review'?'Under review':s==='Approved'?'Approved':s}</div>`).join('')}</div>`;}
+const PAGES=[['home','Overview'],['samples','My samples'],['reports','Certificates'],['request','Request testing'],['complaints','Complaints'],['account','Account']];
+function nav(){$('nav').innerHTML=PAGES.map(([k,l])=>`<button class="${k===page?'on':''}" onclick="go('${k}')">${l}</button>`).join('');$('me').innerHTML=`<span><b>${esc(ctx.name)}</b> · ${esc(ctx.client)}</span><button class="btn ghost sm" onclick="run('logout').then(()=>LimsAPI.signOutLocal())">Sign out</button>`;}
+function go(k){page=k;nav();render();}
+async function render(){$('main').innerHTML='<div class="loading">Loading…</div>';try{home=await run('clientHome');({home:rHome,samples:rSamples,reports:rReports,request:rRequest,complaints:rComplaints,account:rAccount})[page]();}catch(e){fail(e);}}
+const sampleRows=list=>list.length?`<div class="wrap"><table><tr><th>Sample</th><th>Type</th><th>Description</th><th>Received</th><th>Expected</th><th>Status</th></tr>${list.map(s=>`<tr class="click" onclick="viewSample('${s['Sample ID']}')"><td>${s['Sample ID']}</td><td>${esc(s['Sample Type'])}</td><td>${esc(s.Description)}</td><td>${s.Received||'—'}</td><td>${s.Due||'—'}</td><td>${tag(s.Status)}</td></tr>`).join('')}</table></div>`:'<div class="empty">No samples yet.</div>';
+function rHome(){const c=home.counts;$('main').innerHTML=`<div class="top"><div><h1>Welcome, ${esc(ctx.name)}</h1><div class="sub">${esc(home.client.Name)}</div></div><button class="btn" onclick="go('request')">Request testing</button></div>
+ <div class="tiles"><div class="tile"><b>${c.requested}</b><span>Awaiting receipt</span></div><div class="tile"><b>${c.active}</b><span>In the laboratory</span></div><div class="tile"><b>${c.reported}</b><span>Reported</span></div><div class="tile"><b>${home.reports.filter(r=>r.Status==='Issued').length}</b><span>Certificates issued</span></div></div>
+ <div class="panel"><h2>Recent samples<button class="btn ghost sm" onclick="go('samples')">All samples</button></h2>${sampleRows(home.samples.slice(0,6))}</div>
+ <div class="panel"><h2>Latest certificates<button class="btn ghost sm" onclick="go('reports')">All certificates</button></h2>${reportRows(home.reports.slice(0,5))}</div>`;}
+function rSamples(){$('main').innerHTML=`<div class="top"><div><h1>My samples</h1><div class="sub">${home.samples.length} samples</div></div><input id="q" placeholder="Search…" style="width:240px" oninput="filterS()"></div><div class="panel" id="list">${sampleRows(home.samples)}</div>`;}
+function filterS(){const q=$('q').value.toLowerCase();$('list').innerHTML=sampleRows(home.samples.filter(s=>Object.values(s).join(' ').toLowerCase().includes(q)));}
+const reportRows=list=>list.length?`<div class="wrap"><table><tr><th>Certificate</th><th>Sample</th><th>Revision</th><th>Issued</th><th>Status</th><th></th></tr>${list.map(r=>`<tr><td>${r['COA ID']}</td><td>${r['Sample ID']}</td><td>${r.Revision}</td><td>${r.Issued}</td><td>${tag(r.Status)}</td><td>${r['File URL']?`<a href="${r['File URL']}" target="_blank">Download PDF</a>`:''} ${r['Verify Code']?`<a href="${LimsAPI.endpoint()}?verify=${r['Verify Code']}" target="_blank" style="margin-left:8px">Verify</a>`:''}</td></tr>`).join('')}</table></div>`:'<div class="empty">No certificates issued yet.</div>';
+function rReports(){$('main').innerHTML=`<div class="top"><div><h1>Certificates of analysis</h1><div class="sub">Superseded revisions remain listed for your records</div></div></div><div class="panel">${reportRows(home.reports)}</div>`;}
+async function viewSample(id){try{const d=await run('clientSample',id);const s=d.sample;$('main').innerHTML=`<div class="top"><div><h1>${id}</h1><div class="sub">${esc(s['Sample Type'])} · ${esc(s.Description)}</div></div><button class="btn ghost" onclick="go('samples')">Back</button></div>
+ <div class="panel"><h2>Progress</h2>${steps(s.Status)}<div class="grid2"><dl class="kv"><dt>Status</dt><dd>${tag(s.Status)}</dd><dt>Received</dt><dd>${s.Received||'Not yet received'}</dd><dt>Expected report</dt><dd>${s.Due||'—'}</dd><dt>Tests</dt><dd>${esc(s.Tests)||'—'}</dd><dt>Priority</dt><dd>${esc(s.Priority)}</dd></dl><div style="text-align:center"><img src="${d.qr}" width="120" alt="QR"><br><small class="sub">Sample label QR</small></div></div></div>
+ <div class="panel"><h2>Results<small>${d.results.length?'approved results':''}</small></h2>${d.results.length?`<div class="wrap"><table><tr><th>Test</th><th class="num">Result</th><th>Unit</th><th>Uncertainty</th><th>Limit</th><th>Conclusion</th></tr>${d.results.map(r=>`<tr><td>${r.Method}</td><td class="num">${r.Result}</td><td>${r.Unit}</td><td>± ${r.U}</td><td>${r.Spec||'—'}</td><td>${tag(r.Conclusion)}</td></tr>`).join('')}</table></div>`:'<div class="empty">Results appear here once approved by the laboratory.</div>'}</div>
+ <div class="panel"><h2>Certificates</h2>${reportRows(d.reports)}</div>
+ <div class="panel"><h2>Custody history</h2><table><tr><th>When</th><th>Event</th><th>Location</th></tr>${d.coc.map(c=>`<tr><td>${c[0]}</td><td>${tag(c[4])}</td><td>${esc(c[3])}</td></tr>`).join('')}</table></div>`;}catch(e){fail(e);}}
+function rRequest(){$('main').innerHTML=`<div class="top"><div><h1>Request testing</h1><div class="sub">Tell us what you're sending; we'll confirm when the sample arrives</div></div></div>
+ <div class="panel"><label>Sample type</label><select id="type">${['Drinking Water','Wastewater','Surface Water','Pharmaceutical API','Food – Dairy','Food – Peanut','Soil','Other'].map(o=>`<option>${o}</option>`).join('')}</select>
+ <label>Description / sampling point</label><input id="desc"><label>Priority</label><select id="prio"><option>Normal</option><option>Urgent</option></select>
+ <label>Tests required</label><div class="chk">${home.methods.map(m=>`<label><input type="checkbox" value="${m.code}"><span>${esc(m.name)}<br><small class="sub">${m.matrix} · ${home.currency} ${m.price}</small></span></label>`).join('')}</div>
+ <label>Notes for the laboratory</label><textarea id="notes" rows="2"></textarea>
+ <div class="hint">Estimated cost: <b id="cost">${home.currency} 0</b>. Final invoicing follows the laboratory's price list.</div>
+ <div style="text-align:right;margin-top:16px"><button class="btn" id="send">Submit request</button></div></div>`;
+ const upd=()=>{$('cost').textContent=home.currency+' '+[...document.querySelectorAll('.chk input:checked')].reduce((a,x)=>a+Number(home.methods.find(m=>m.code===x.value).price||0),0);};document.querySelectorAll('.chk input').forEach(x=>x.onchange=upd);
+ $('send').onclick=async()=>{const tests=[...document.querySelectorAll('.chk input:checked')].map(x=>x.value).join(',');if(!tests)return toast('Select at least one test',true);$('send').disabled=true;try{const id=await run('requestSample',{type:$('type').value,description:$('desc').value,priority:$('prio').value,tests,notes:$('notes').value});toast('Request submitted as '+id);go('samples');}catch(e){fail(e);$('send').disabled=false;}};}
+function rComplaints(){$('main').innerHTML=`<div class="top"><div><h1>Complaints and queries</h1><div class="sub">We log every complaint and respond in writing</div></div></div>
+ <div class="grid2"><div class="panel"><h2>Raise a complaint</h2><label>Subject</label><input id="subj"><label>Related sample (optional)</label><select id="sid"><option value=""></option>${home.samples.map(s=>`<option>${s['Sample ID']}</option>`).join('')}</select><label>Details</label><textarea id="det" rows="4"></textarea><div style="text-align:right;margin-top:12px"><button class="btn" id="cp">Submit</button></div></div>
+ <div class="panel"><h2>Your complaints</h2>${home.complaints.length?`<table><tr><th>Ref</th><th>Date</th><th>Subject</th><th>Status</th></tr>${home.complaints.map(c=>`<tr><td>${c['Complaint ID']}</td><td>${c.Received}</td><td>${esc(c.Subject)}</td><td>${tag(c.Status)}</td></tr>`).join('')}</table>`:'<div class="empty">None raised.</div>'}</div></div>`;
+ $('cp').onclick=async()=>{if(!$('subj').value)return toast('Subject is required',true);try{const id=await run('clientComplaint',$('subj').value,$('det').value,$('sid').value);toast('Logged as '+id);render();}catch(e){fail(e);}};}
+function rAccount(){const c=home.client;$('main').innerHTML=`<div class="top"><div><h1>Account</h1></div></div><div class="grid2"><div class="panel"><h2>Organisation</h2><dl class="kv"><dt>Name</dt><dd>${esc(c.Name)}</dd><dt>Contact</dt><dd>${esc(c.Contact)}</dd><dt>Email</dt><dd>${esc(c.Email)}</dd><dt>Phone</dt><dd>${esc(c.Phone)}</dd><dt>Address</dt><dd>${esc(c.Address)}</dd></dl><p class="sub">Contact the laboratory to update these details.</p></div>
+ <div class="panel"><h2>Change password</h2><label>Current password</label><input id="op" type="password"><label>New password (8+ characters)</label><input id="np" type="password"><div style="text-align:right;margin-top:12px"><button class="btn" id="pwb">Update password</button></div></div></div>`;
+ $('pwb').onclick=async()=>{try{await run('changePassword',$('op').value,$('np').value);toast('Password updated');$('op').value=$('np').value='';}catch(e){fail(e);}};}
+(async()=>{try{ctx=await run('getContext');if(!LimsAPI.checkPortal(ctx.portal))return;document.querySelectorAll('[data-lab-name]').forEach(el=>el.textContent=ctx.settings['Lab Name']||'Laboratory');nav();render();}catch(e){fail(e);}})();
+</script></body></html>

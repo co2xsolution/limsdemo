@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{--navy:#1B2A47;--navy-head:#23395B;--teal:#2A8A7C;--teal-soft:#D9EFEA;--bg:#F3F5F7;--panel:#fff;--line:#DDE3EA;--ink:#1B2433;--muted:#6B7686;
+    --amber:#B7791F;--amber-soft:#FBEFD3;--red:#B23A3A;--red-soft:#F8DEDE;--green:#2F7D4F;--green-soft:#DFF1E5}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.45}
+  button,input,select,textarea{font-family:inherit;font-size:inherit}
+  .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+  .side{background:var(--navy);color:#fff;display:flex;flex-direction:column}
+  .brand{background:var(--navy-head);padding:20px 22px;font-size:19px;font-weight:600;display:flex;align-items:center;gap:12px}
+  .brand i{width:12px;height:12px;border-radius:50%;background:var(--teal)}
+  .nav{padding:8px 0 16px;overflow-y:auto;flex:1}
+  .grp{padding:18px 22px 6px;font-size:12px;letter-spacing:.06em;color:#8090A8;text-transform:uppercase}
+  .item{display:flex;align-items:center;gap:12px;padding:11px 22px;color:#D6DCE6;cursor:pointer;border:0;background:none;width:100%;text-align:left;font-size:15px}
+  .item:hover{background:rgba(255,255,255,.06);color:#fff}.item.on{background:var(--teal);color:#fff;font-weight:600}
+  .item:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+  .item svg{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .item .n{margin-left:auto;background:rgba(255,255,255,.18);border-radius:999px;padding:0 8px;font-size:12px}
+  .who{padding:14px 22px;font-size:12.5px;color:#A8B3C5;border-top:1px solid rgba(255,255,255,.08)}.who b{color:#fff;display:block}
+  .main{padding:28px 36px;min-width:0}
+  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  h1{font-size:24px;font-weight:600;margin:0}.sub{color:var(--muted)}
+  .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{background:var(--teal);color:#fff;border:0;border-radius:6px;padding:8px 14px;font-weight:500;cursor:pointer;white-space:nowrap}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line)}.btn.danger{background:var(--red)}.btn.sm{padding:4px 10px;font-size:12.5px}
+  .btn:disabled{opacity:.5;cursor:default}
+  .btn:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+  input,select,textarea{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:#fff}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+  .tile{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;cursor:pointer}
+  .tile b{display:block;font-size:26px;font-weight:600;line-height:1.1}.tile span{color:var(--muted);font-size:13px}
+  .tile.warn{border-left:4px solid var(--red)}.tile.note{border-left:4px solid var(--amber)}.tile.ok{border-left:4px solid var(--teal)}
+  .grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:18px 20px;margin-bottom:16px;min-width:0}
+  .panel h2{font-size:15px;font-weight:600;margin:0 0 12px;display:flex;align-items:center;gap:8px}.panel h2 small{color:var(--muted);font-weight:400}
+  .panel h2 .btn{margin-left:auto}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;color:var(--muted);font-weight:500;font-size:12.5px;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:8px 10px;border-bottom:1px solid #EEF1F4;vertical-align:top}tr:last-child td{border-bottom:0}
+  tr.click{cursor:pointer}tr.click:hover td{background:#F7FAF9}
+  .wrap{overflow-x:auto}.num{text-align:right;font-variant-numeric:tabular-nums}
+  .tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap}
+  .t-teal{background:var(--teal-soft);color:#1E6B60}.t-amber{background:var(--amber-soft);color:#7A4E0E}.t-red{background:var(--red-soft);color:var(--red)}.t-green{background:var(--green-soft);color:var(--green)}.t-grey{background:#E9EDF1;color:#4E5A6A}
+  .empty{color:var(--muted);padding:12px 0}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);margin-bottom:16px}
+  .tab{background:none;border:0;padding:10px 14px;cursor:pointer;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab.on{color:var(--teal);border-color:var(--teal);font-weight:500}
+  .bars{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;align-items:end;height:130px;margin-top:22px}
+  .bar{display:flex;gap:2px;align-items:end;height:100%}.bar i{flex:1;background:var(--teal);border-radius:3px 3px 0 0;min-height:2px;display:block}.bar i.b{background:#9CC9C0}
+  .bar-l{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;font-size:11.5px;color:var(--muted);text-align:center;margin-top:6px}
+  .legend{font-size:12px;color:var(--muted)}.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin:0 4px 0 10px;background:var(--teal)}.legend i.b{background:#9CC9C0}
+  .feed{padding:0;margin:0}.feed li{list-style:none;padding:7px 0;border-bottom:1px solid #EEF1F4;display:grid;grid-template-columns:1fr auto;gap:12px}.feed li:last-child{border:0}.feed small{color:var(--muted)}
+  .kv{display:grid;grid-template-columns:140px 1fr;gap:4px 12px}.kv dt{color:var(--muted)}.kv dd{margin:0}
+  .sheet{position:fixed;inset:0;background:rgba(17,24,39,.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.sheet.open{display:flex}
+  .form{background:#fff;border-radius:10px;padding:24px;width:min(560px,100%);max-height:92vh;overflow:auto}
+  .form h2{margin:0 0 4px;font-size:17px}.form label{display:block;margin:10px 0 4px;font-size:13px;color:var(--muted)}
+  .form input,.form select,.form textarea{width:100%}.form .row{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}
+  .form .hint{background:var(--teal-soft);border-radius:6px;padding:8px 10px;margin-top:10px;font-size:13px}
+  .toast{position:fixed;bottom:20px;right:20px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:6px;display:none;z-index:20;max-width:420px}.toast.err{background:var(--red)}
+  .loading{color:var(--muted);padding:40px 0;text-align:center}
+  .matrix td,.matrix th{text-align:center;padding:6px}.matrix td:first-child,.matrix th:first-child{text-align:left}
+  .lvl{display:inline-block;width:100%;padding:3px 0;border-radius:4px;font-size:12px}
+  .lvl.Trainer{background:var(--teal);color:#fff}.lvl.Authorised{background:var(--teal-soft);color:#1E6B60}.lvl.Trainee{background:var(--amber-soft);color:#7A4E0E}.lvl.over{outline:2px solid var(--red)}
+  .qr{display:flex;gap:20px;align-items:flex-start}.qr img{border:1px solid var(--line);border-radius:6px}
+  .prog{height:6px;background:#E9EDF1;border-radius:3px;overflow:hidden}.prog i{display:block;height:100%;background:var(--teal)}
+  .stats{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:13px}.stats b{color:var(--ink);font-weight:500}
+  code{background:#EEF1F4;padding:1px 5px;border-radius:4px;font-size:12.5px}
+  @media (max-width:900px){.app{grid-template-columns:1fr}.side{position:sticky;top:0;z-index:5}.nav{display:flex;overflow-x:auto;padding:0}.grp,.who{display:none}.item{white-space:nowrap;padding:10px 14px}.item .n{margin-left:6px}.grid,.grid2{grid-template-columns:1fr}.main{padding:18px}}
+</style>
+<meta name="referrer" content="no-referrer">
+<script src="assets/config.js"></script>
+<script src="assets/api.js"></script>
+</head>
+<body>
+<div class="app">
+  <aside class="side"><div class="brand"><i></i><span id="labName">Laboratory</span></div><nav class="nav" id="nav"></nav><div class="who" id="who"></div></aside>
+  <main class="main" id="main"><div class="loading">Loading…</div></main>
+</div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"><div class="form" id="form"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+// ---------------------------------------------------------------- Config
+const I={dash:'<path d="M3 13h6V3H3zM11 21h10V11H11zM3 21h6v-6H3zM11 9h10V3H11z"/>',flask:'<path d="M9 3h6M10 3v6L4 20h16l-6-11V3"/>',sheet:'<path d="M8 3h8l4 4v14H4V3zM8 12h8M8 16h8"/>',check:'<path d="M4 12l5 5L20 7"/>',doc:'<path d="M6 2h9l5 5v15H6zM14 2v6h6"/>',tool:'<path d="M14 7l3 3 4-4-3-3zM3 21l9-9"/>',vial:'<path d="M9 2v8l-5 8a2 2 0 002 3h12a2 2 0 002-3l-5-8V2M8 2h8"/>',chart:'<path d="M3 20h18M6 16l4-5 4 3 5-7"/>',warn:'<path d="M12 3L2 21h20zM12 10v5M12 18v.5"/>',chat:'<path d="M4 4h16v12H8l-4 4z"/>',folder:'<path d="M3 6h6l2 2h10v12H3z"/>',user:'<path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0"/>',bld:'<path d="M4 21V4h10v17M14 10h6v11M8 8h2M8 12h2M8 16h2"/>',clock:'<path d="M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2"/>',cog:'<path d="M12 15a3 3 0 100-6 3 3 0 000 6zM19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 01-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 01-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 012.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 012.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/>'};
+const NAV=[['Overview',[['dashboard','Dashboard',I.dash]]],
+ ['Laboratory',[['samples','Samples',I.flask],['testing','Testing & Results',I.sheet],['review','Review & Approval',I.check],['coa','COA / Reports',I.doc]]],
+ ['Resources',[['equipment','Equipment',I.tool],['chemicals','Chemicals & Standards',I.vial]]],
+ ['Quality',[['qc','Quality Control',I.chart],['ncr','Nonconforming / CAPA',I.warn],['complaints','Complaints',I.chat]]],
+ ['Management',[['documents','Documents',I.folder],['personnel','Personnel',I.user],['clients','Clients',I.bld],['audit','Audit Trail',I.clock]]],
+ ['Admin',[['admin','Admin',I.cog]]]];
+const TITLES={};NAV.forEach(g=>g[1].forEach(x=>TITLES[x[0]]=x[1]));
+// Which sheets each module shows as tabs
+const TABS={samples:['Samples','ChainOfCustody'],testing:['Worksheets','Results'],coa:['Reports'],equipment:['Equipment','EquipmentLog'],chemicals:['Chemicals','ChemicalUsage'],qc:['QC'],ncr:['Nonconforming','CAPA'],complaints:['Complaints'],documents:['Documents','DocumentVersions','Acknowledgements'],personnel:['Personnel','Competency','Training'],clients:['Clients'],audit:['AuditTrail'],admin:['Users','Methods','Settings']};
+const STATUS={Samples:['Requested','Received','In Progress','Awaiting Review','Approved','Reported','Cancelled','Disposed'],Worksheets:['In Progress','Awaiting Review','Complete'],Reports:['Withdrawn'],Equipment:['In Service','Calibration Overdue','Out of Service','Retired'],Chemicals:['In Stock','Low Stock','Expired','Depleted','Quarantined'],Nonconforming:['Open','Under Investigation','Closed'],CAPA:['Open','In Progress','Closed'],Complaints:['Open','Under Investigation','Resolved'],Documents:['Draft','Effective','Obsolete'],Personnel:['Active','Inactive'],Clients:['Pending','Active','Inactive'],Methods:['Active','Suspended','Withdrawn']};
+const NO_EDIT=['ChainOfCustody','AuditTrail','ChemicalUsage','Acknowledgements','DocumentVersions','Results','Reports'];
+const NO_ADD=['ChainOfCustody','AuditTrail','Results','Reports','ChemicalUsage','Acknowledgements','DocumentVersions'];
+
+const APP=new URL('index.html',location.href).href;
+let ctx=null,current='dashboard',tab=null,tableData=null,extra={};
+const $=id=>document.getElementById(id);const main=()=>$('main');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const run=(fn,...a)=>LimsAPI.call(fn,...a);
+function toast(m,err){const t=$('toast');t.textContent=m;t.className='toast'+(err?' err':'');t.style.display='block';setTimeout(()=>t.style.display='none',err?5000:2500);}
+const fail=e=>toast(e.message||String(e),true);
+function tag(v){const s=String(v);if(!s)return'';const c=/overdue|fail|out of s|reject|urgent|major|expired|depleted|withdrawn|correction|^open$|superseded|no qc/i.test(s)?'t-red':/warning|pending|awaiting|investigation|draft|received|low stock|trainee|quarantin|entered|below lod/i.test(s)?'t-amber':/pass|complete|approved|issued|reported|in service|resolved|closed|complies|active|effective|in stock|reviewed|authorised|trainer/i.test(s)?'t-green':/progress/i.test(s)?'t-teal':'t-grey';return`<span class="tag ${c}">${esc(s)}</span>`;}
+const statusish=h=>/^(status|result|conclusion|priority|severity|level|qc status|qualification|role|type|ack required|active)$/i.test(h);
+const can=(...roles)=>ctx.role==='Admin'||roles.includes(ctx.role);
+const opts=(arr,sel)=>arr.map(o=>`<option ${o==sel?'selected':''}>${esc(o)}</option>`).join('');
+
+const HIDE={Analyst:['admin'],Reviewer:['admin'],'Technical Manager':['admin'],'Quality Manager':[]};
+function visible(k){return !ctx||!HIDE[ctx.role]||!HIDE[ctx.role].includes(k);}
+function renderNav(){$('nav').innerHTML=NAV.map(([g,items])=>[g,items.filter(i=>visible(i[0]))]).filter(g=>g[1].length).map(([g,items])=>`<div class="grp">${g}</div>`+items.map(([k,l,ic])=>`<button class="item ${k===current?'on':''}" onclick="go('${k}')"><svg viewBox="0 0 24 24">${ic}</svg>${l}${extra.badges&&extra.badges[k]?`<span class="n">${extra.badges[k]}</span>`:''}</button>`).join('')).join('');
+ if(ctx)$('who').innerHTML=`<b>${esc(ctx.name)}</b>${esc(ctx.role)} · ${esc(ctx.portal)} portal<div style="margin-top:8px;display:flex;gap:6px"><button class="btn sm ghost" onclick="pwForm()">Password</button><button class="btn sm ghost" onclick="run('logout').then(()=>LimsAPI.signOutLocal())">Sign out</button></div>`;}
+function go(k,t){current=k;tab=t||(TABS[k]||[])[0];renderNav();load();}
+function head(title,sub,actions){return`<div class="top"><div><h1>${title}</h1><div class="sub">${sub||''}</div></div><div class="actions">${actions||''}</div></div>`;}
+async function load(){main().innerHTML='<div class="loading">Loading…</div>';try{await({dashboard:renderDash,samples:renderSamples,testing:renderTesting,review:renderReview,coa:renderCoa,qc:renderQc,documents:renderDocs,personnel:renderPersonnel,admin:renderAdmin}[current]||renderGeneric)();}catch(e){fail(e);main().innerHTML=`<div class="panel"><h2>Could not load</h2><p>${esc(e.message||e)}</p><p class="sub">Contact the laboratory administrator if this problem continues.</p></div>`;}}
+
+// ---------------------------------------------------------------- Generic table
+function tabsHtml(){const t=TABS[current]||[];return t.length>1?`<div class="tabs">${t.map(s=>`<button class="tab ${s===tab?'on':''}" onclick="tab='${s}';load()">${esc(s.replace(/([A-Z])/g,' $1').trim())}</button>`).join('')}</div>`:'';}
+async function tableHtml(sheet,o={}){const d=await run('getSheet',sheet);tableData=d;const hasStatus=d.headers.includes('Status')&&STATUS[sheet];
+ return`<div class="panel"><h2>${o.title||''}<small>${d.rows.length} records</small>${NO_ADD.includes(sheet)||o.noAdd?'':`<button class="btn sm" onclick="openForm('${sheet}')">Add</button>`}</h2>
+ <input id="q" placeholder="Search…" oninput="drawRows('${sheet}')" style="margin-bottom:10px;width:260px"><div class="wrap"><table id="tbl"><thead><tr>${d.headers.map(h=>`<th>${esc(h)}</th>`).join('')}${hasStatus?'<th></th>':''}</tr></thead><tbody></tbody></table></div></div>`;}
+function drawRows(sheet){const q=($('q')?.value||'').toLowerCase(),d=tableData,hs=d.headers.includes('Status')&&STATUS[sheet];const rows=d.rows.filter(r=>!q||r.join(' ').toLowerCase().includes(q));const editable=!NO_EDIT.includes(sheet);
+ const tb=document.querySelector('#tbl tbody');if(!tb)return;tb.innerHTML=rows.length?rows.map(r=>`<tr class="${editable?'click':''}" ${editable?`onclick="openForm('${sheet}','${esc(r[0])}')"`:''}>${r.map((v,i)=>`<td>${statusish(d.headers[i])&&isNaN(Number(v))?tag(v):/^https?:/.test(v)?`<a href="${esc(v)}" target="_blank" onclick="event.stopPropagation()">Open</a>`:esc(v)}</td>`).join('')}${hs?`<td onclick="event.stopPropagation()"><select onchange="setStatus('${sheet}','${esc(r[0])}',this.value)"><option value="">Status…</option>${opts(sheet==='Samples'?['Requested','Received','Cancelled','Disposed']:STATUS[sheet])}</select></td>`:''}</tr>`).join(''):`<tr><td colspan="${d.headers.length+1}" class="empty">No records match.</td></tr>`;}
+async function setStatus(sheet,id,v){if(!v)return;try{await run('setField',sheet,id,'Status',v);toast(`${id} → ${v}`);load();}catch(e){fail(e);}}
+async function renderGeneric(){main().innerHTML=head(TITLES[current])+tabsHtml()+(IMPORTABLE.includes(tab)?ioBar(tab):'')+await tableHtml(tab);drawRows(tab);}
+
+// ---------------------------------------------------------------- Forms (modal)
+function field(name,val,o={}){const l=name.toLowerCase();let inp;
+ if(o.select)inp=`<select data-f="${esc(name)}">${o.blank?'<option value=""></option>':''}${opts(o.select,val)}</select>`;
+ else if(l==='status'&&o.sheet&&STATUS[o.sheet])inp=`<select data-f="Status">${opts(STATUS[o.sheet],val||STATUS[o.sheet][0])}</select>`;
+ else if(l==='role')inp=`<select data-f="Role">${opts(ctx.roles,val)}</select>`;
+ else if(l==='portal')inp=`<select data-f="Portal">${opts(ctx.portals,val||'Staff')}</select>`;
+ else if(l==='password hash')inp=`<input data-f="Password Hash" type="password" placeholder="${val?'Leave blank to keep':'Set a password'}" autocomplete="new-password">`;
+ else if(l==='last login')inp=`<input data-f="Last Login" value="${esc(val)}" readonly>`;
+ else if(l==='client')inp=`<select data-f="${esc(name)}">${o.sheet==='Users'?'<option value=""></option>':''}${opts(ctx.clients,val)}</select>`;
+ else if(l==='method'||l==='code'&&o.sheet!=='Methods')inp=`<select data-f="${esc(name)}">${opts(ctx.methods.map(m=>m.Code),val)}</select>`;
+ else if(/^(analyst|assigned to|owner|performed by|raised by|signatory)$/.test(l))inp=`<select data-f="${esc(name)}"><option value=""></option>${opts(ctx.staff,val)}</select>`;
+ else if(/details|description|notes|action|summary|root cause|address|comment/.test(l))inp=`<textarea data-f="${esc(name)}" rows="2">${esc(val)}</textarea>`;
+ else if(/date|received|due|created|issued|expires|calibrat|effective|joined|authorised|completed|valid until|maintenance$/.test(l)&&!/by$/.test(l))inp=`<input data-f="${esc(name)}" type="date" value="${esc(val)}">`;
+ else if(l==='active')inp=`<select data-f="Active">${opts(['Yes','No','Pending'],val||'Yes')}</select>`;
+ else if(l==='ack required')inp=`<select data-f="${esc(name)}">${opts(['Yes','No'],val||'Yes')}</select>`;
+ else if(/qty|price|lod|uncertainty %|expected|measured|min qty|revision/.test(l))inp=`<input data-f="${esc(name)}" type="number" step="any" value="${esc(val)}">`;
+ else inp=`<input data-f="${esc(name)}" value="${esc(val)}" ${o.ro?'readonly':''}>`;
+ return`<label>${esc(name)}${o.req?' *':''}</label>${inp}`;}
+function openModal(title,body,onSave,saveLabel){$('form').innerHTML=`<h2>${title}</h2>${body}<div class="row"><button class="btn ghost" onclick="closeModal()">Cancel</button>${onSave?`<button class="btn" id="saveBtn">${saveLabel||'Save'}</button>`:''}</div>`;
+ if(onSave)$('saveBtn').onclick=async()=>{$('saveBtn').disabled=true;try{await onSave(vals());closeModal();}catch(e){fail(e);}if($('saveBtn'))$('saveBtn').disabled=false;};$('sheet').classList.add('open');}
+function closeModal(){$('sheet').classList.remove('open');}
+function vals(){const o={};document.querySelectorAll('#form [data-f]').forEach(el=>o[el.dataset.f]=el.value);return o;}
+function openForm(sheet,id){const h=ctx.schema[sheet];const row=id&&tableData?tableData.rows.find(r=>r[0]==id):null;const isEdit=!!row;
+ openModal(`${isEdit?'Edit':'New'} — ${sheet.replace(/([A-Z])/g,' $1').trim()}`,h.map((f,i)=>field(f,row?row[i]:'',{sheet,req:i===0,ro:isEdit&&i===0})).join(''),async v=>{const arr=h.map(f=>v[f]);if(!arr[0])throw new Error(`${h[0]} is required`);
+  if(isEdit)await run('updateRow',sheet,id,arr);else await run('addRow',sheet,arr);toast(isEdit?'Saved':'Added');load();});}
+
+// ---------------------------------------------------------------- Import / export
+const IMPORTABLE=['Samples','Equipment','Chemicals'];
+function ioBar(sheet,method){return`<div class="panel" style="padding:12px 20px;display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="sub" style="margin-right:auto">${IMPORTABLE.includes(sheet)?'Import from CSV / Excel / Google Sheet, or export this list.':'Export this list.'}</span>
+ ${IMPORTABLE.includes(sheet)?`<button class="btn ghost sm" onclick="importForm('${sheet}')">Import</button><button class="btn ghost sm" onclick="downloadTemplate('${sheet}')">Template</button>`:''}
+ <button class="btn ghost sm" onclick="doExport('${sheet}','download','${method||''}')">Export CSV</button><button class="btn ghost sm" onclick="doExport('${sheet}','sheet','${method||''}')">Export to Google Sheet</button></div>`;}
+function downloadText(name,text){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:'text/csv'}));a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);return true;}catch(e){return false;}}
+async function doExport(sheet,mode,method){try{toast('Exporting…');const r=await run('exportData',sheet,mode==='sheet'?'sheet':'csv',method||'');
+ if(mode==='sheet'){window.open(r.url,'_blank');toast(`${r.count} rows exported to Google Sheet`);}
+ else{const ok=downloadText(r.filename,r.csv);toast(`${r.count} rows exported${ok?'':' — download blocked, use the Drive copy'}`);if(!ok||r.url)openModal('Export ready',`<p>${r.count} rows. A copy was also saved to Drive → <i>LIMS Exports</i>.</p><p><a href="${r.url}" target="_blank" class="btn">Open CSV in Drive</a></p>`);}}catch(e){fail(e);}}
+async function downloadTemplate(sheet){const t=await run('importTemplate',sheet);if(!downloadText(sheet+'_template.csv',t))openModal('Template columns',`<p>Header row for ${sheet}:</p><textarea readonly rows="3" style="width:100%">${esc(t.trim())}</textarea>`);}
+function importForm(sheet){const h=ctx.schema[sheet];openModal('Import — '+sheet,`<p class="sub">Header row must use these column names (order doesn't matter; unknown columns are ignored):</p><code style="display:block;white-space:normal;padding:8px;line-height:1.7">${h.join(' · ')}</code>
+ <label>File (.csv, .xlsx, .xls)</label><input type="file" id="impFile" accept=".csv,.xlsx,.xls">
+ <label>…or Google Sheet URL (shared with the script owner)</label><input id="impUrl" placeholder="https://docs.google.com/spreadsheets/d/…">
+ <div id="impPrev"></div><div class="hint">${sheet==='Samples'?'Blank Sample IDs are generated automatically; blank Received/Due default to today and the standard TAT. ':''}Rows whose ID already exists are skipped.</div>`,
+ async v=>{const url=$('impUrl').value.trim();let res;
+  if(url){res=await run('importFromSheetUrl',sheet,url);}
+  else{if(!window._impRows||!window._impRows.length)throw new Error('Choose a file or enter a Sheet URL');res=await run('importRows',sheet,window._impRows);}
+  toast(`Imported ${res.added}, skipped ${res.skipped} duplicates${res.errors.length?', '+res.errors.length+' errors':''}`);
+  if(res.errors.length)setTimeout(()=>openModal('Import errors',`<ul>${res.errors.map(e=>`<li>${esc(e)}</li>`).join('')}</ul>`),300);load();},'Import');
+ window._impRows=null;
+ $('impFile').onchange=e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=ev=>{try{const wb=XLSX.read(ev.target.result,{type:'array',cellDates:true});const ws=wb.Sheets[wb.SheetNames[0]];const rows=XLSX.utils.sheet_to_json(ws,{defval:'',raw:false,dateNF:'yyyy-mm-dd'});
+  const norm={};h.forEach(k=>norm[k.toLowerCase().replace(/[^a-z0-9]/g,'')]=k);window._impRows=rows.map(r=>{const o={};Object.keys(r).forEach(k=>{const key=norm[k.toLowerCase().replace(/[^a-z0-9]/g,'')];if(key)o[key]=r[k];});return o;});
+  const found=Object.keys(window._impRows[0]||{}),missing=h.filter(k=>!found.includes(k));
+  $('impPrev').innerHTML=`<p style="margin:10px 0 4px"><b>${rows.length}</b> rows found. Matched columns: ${found.length}/${h.length}.${missing.length?` <span class="sub">Not in file: ${missing.join(', ')}</span>`:''}</p><div class="wrap"><table>${[found].concat(window._impRows.slice(0,5).map(r=>found.map(k=>r[k]))).map((r,i)=>`<tr>${r.map(c=>i?`<td>${esc(c)}</td>`:`<th>${esc(c)}</th>`).join('')}</tr>`).join('')}</table></div>`;}catch(err){fail(err);}};rd.readAsArrayBuffer(f);};}
+
+// ---------------------------------------------------------------- Dashboard
+async function renderDash(){const d=await run('getDashboard');const t=d.totals;extra.badges={review:t.reviewQueue||'',testing:t.corrections||'',admin:t.pendingUsers||''};renderNav();
+ const max=Math.max(1,...d.weeks.map(w=>Math.max(w.received,w.reported)));const dt=new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ main().innerHTML=head('Dashboard',dt,`<button class="btn ghost" onclick="load()">Refresh</button><button class="btn" onclick="registerSample()">Register sample</button>`)+`
+ <div class="tiles">
+  <div class="tile" onclick="go('samples')"><b>${t.active}</b><span>Active samples</span></div>
+  <div class="tile ${t.requested?'note':''}" onclick="go('samples')"><b>${t.requested||0}</b><span>Client requests to receive</span></div>
+  <div class="tile" onclick="go('samples')"><b>${t.received}</b><span>Received, not started</span></div>
+  <div class="tile" onclick="go('testing')"><b>${t.inProgress}</b><span>In testing</span></div>
+  <div class="tile" onclick="go('review')"><b>${t.reviewQueue}</b><span>Results awaiting review</span></div>
+  <div class="tile ${t.corrections?'note':''}" onclick="go('review')"><b>${t.corrections}</b><span>Needs correction</span></div>
+  <div class="tile ok" onclick="go('coa')"><b>${t.approved}</b><span>Ready to report</span></div>
+  <div class="tile ${t.overdue?'warn':''}" onclick="go('samples')"><b>${t.overdue}</b><span>Overdue</span></div>
+  <div class="tile ${t.dueSoon?'note':''}"><b>${t.dueSoon}</b><span>Due within 2 days</span></div>
+  <div class="tile" onclick="go('coa')"><b>${t.avgTat==null?'—':t.avgTat.toFixed(1)+' d'}</b><span>Average TAT (target ${t.target} d)</span></div>
+  <div class="tile ${t.onTime!=null&&t.onTime<90?'note':'ok'}"><b>${t.onTime==null?'—':Math.round(t.onTime)+'%'}</b><span>Reported on time</span></div>
+  ${can('Admin')&&t.pendingUsers?`<div class="tile note" onclick="go('admin','Users')"><b>${t.pendingUsers}</b><span>Accounts awaiting approval</span></div>`:''}
+  <div class="tile ${t.openNcr?'note':''}" onclick="go('ncr')"><b>${t.openNcr}</b><span>Open NCRs</span></div>
+  <div class="tile ${t.qcFails30?'warn':''}" onclick="go('qc')"><b>${t.qcFails30}</b><span>QC warnings/fails, 30 d</span></div>
+ </div>
+ <div class="grid"><div>
+  <div class="panel"><h2>Samples received and reported<small>last 8 weeks</small><span class="legend"><i></i>received<i class="b"></i>reported</span></h2>
+   <div class="bars">${d.weeks.map(w=>`<div class="bar" title="${w.label}: ${w.received} received, ${w.reported} reported"><i style="height:${w.received/max*100}%"></i><i class="b" style="height:${w.reported/max*100}%"></i></div>`).join('')}</div>
+   <div class="bar-l">${d.weeks.map(w=>`<span>${w.label}</span>`).join('')}</div></div>
+  <div class="panel"><h2>Recent samples</h2><div class="wrap"><table><tr><th>ID</th><th>Client</th><th>Type</th><th>Received</th><th>Priority</th><th>Status</th></tr>${d.recent.map(r=>`<tr class="click" onclick="viewSample('${r.id}')"><td>${r.id}</td><td>${esc(r.client)}</td><td>${esc(r.type)}</td><td>${r.received}</td><td>${tag(r.priority)}</td><td>${tag(r.status)}</td></tr>`).join('')}</table></div></div>
+ </div><div>
+  <div class="panel"><h2>Overdue samples</h2>${d.overdue.length?`<table><tr><th>ID</th><th>Client</th><th>Late</th><th>Stage</th></tr>${d.overdue.map(r=>`<tr class="click" onclick="viewSample('${r.id}')"><td>${r.id}</td><td>${esc(r.client)}</td><td>${tag(r.days+' d')}</td><td>${tag(r.status)}</td></tr>`).join('')}</table>`:'<div class="empty">Nothing overdue.</div>'}</div>
+  <div class="panel"><h2>Equipment attention</h2>${d.calibration.length?`<table><tr><th>Asset</th><th>Calibration</th><th>Status</th></tr>${d.calibration.map(r=>`<tr><td>${esc(r.name)}</td><td>${r.cal}${r.calDays<0?' '+tag(-r.calDays+' d overdue'):r.calDays<=30?' '+tag('in '+r.calDays+' d'):''}</td><td>${tag(r.status)}</td></tr>`).join('')}</table>`:'<div class="empty">All equipment in service and in calibration.</div>'}</div>
+  <div class="panel"><h2>Reagent alerts<small>expiry ≤ 60 d or below minimum</small></h2>${d.reagents.length?`<table><tr><th>Lot</th><th>Name</th><th>Qty</th><th>Expires</th></tr>${d.reagents.map(r=>`<tr><td>${r.lot}</td><td>${esc(r.name)}</td><td>${r.qty}</td><td>${r.days<0?tag('expired'):r.expires}</td></tr>`).join('')}</table>`:'<div class="empty">No reagent alerts.</div>'}</div>
+  <div class="panel"><h2>Recent activity</h2><ul class="feed">${d.activity.map(a=>`<li><span>${esc(a[3])} — ${esc(a[4])}<br><small>${esc(a[5])} · ${esc(a[1])}</small></span><small>${esc(a[0])}</small></li>`).join('')}</ul></div>
+ </div></div>`;}
+
+// ---------------------------------------------------------------- Samples
+async function renderSamples(){main().innerHTML=head('Samples','Registration, chain of custody and status',`<button class="btn" onclick="registerSample()">Register sample</button>`)+tabsHtml()+(tab==='Samples'?ioBar('Samples'):'')+await tableHtml(tab);drawRows(tab);
+ if(tab==='Samples')document.querySelectorAll('#tbl tbody tr').forEach(tr=>{const id=tr.cells[0]?.textContent;if(!id)return;tr.onclick=()=>viewSample(id);const r=tableData.rows.find(x=>x[0]===id);if(r&&r[7]==='Requested')tr.cells[7].innerHTML+=` <button class="btn sm" onclick="event.stopPropagation();receiveForm('${id}')">Receive</button>`;});}
+function receiveForm(id){openModal('Confirm receipt — '+id,field('Condition','Acceptable',{select:['Acceptable','Damaged','Above temperature','Insufficient volume']})+field('Assigned To','',{select:ctx.staff,blank:1})+`<div class="hint">Sets received date to today and due date from the default TAT. The client sees the sample move to Received.</div>`,async v=>{await run('receiveRequested',id,v.Condition,v['Assigned To']);toast('Received');load();},'Confirm');}
+function registerSample(){openModal('Register sample',field('Client','',{select:ctx.clients})+field('Sample Type','Drinking Water')+field('Description','')+field('Received',new Date().toISOString().slice(0,10))+field('Due','')+field('Priority','Normal',{select:['Low','Normal','Urgent']})+field('Assigned To','',{select:ctx.staff,blank:1})+field('Tests','',{select:[]}).replace(/<select[^>]*><\/select>/,`<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px">${ctx.methods.filter(m=>m.Status==='Active').map(m=>`<label style="margin:0;display:flex;gap:4px;align-items:center;color:var(--ink)"><input type="checkbox" class="tst" value="${m.Code}">${m.Code}</label>`).join('')}</div>`)+field('Condition','Acceptable',{select:['Acceptable','Damaged','Above temperature','Insufficient volume']})+field('Notes','')+`<div class="hint">Sample ID is generated automatically. Due date defaults to ${ctx.settings['Default TAT (days)']||7} days if left blank.</div>`,
+ async v=>{const tests=[...document.querySelectorAll('.tst:checked')].map(x=>x.value).join(',');if(!v.Client)throw new Error('Client is required');const id=await run('registerSample',{client:v.Client,type:v['Sample Type'],description:v.Description,received:v.Received,due:v.Due,priority:v.Priority,assigned:v['Assigned To'],tests,condition:v.Condition,notes:v.Notes});toast('Registered '+id);viewSample(id);},'Register');}
+async function viewSample(id){const d=await run('getSample',id);const s=d.sample;current='samples';renderNav();
+ main().innerHTML=head(id,`${esc(s['Sample Type'])} · ${esc(s.Client)}`,`<button class="btn ghost" onclick="go('samples')">Back</button><button class="btn ghost" onclick="cocForm('${id}')">Transfer custody</button>${s.Status==='Approved'&&can('Technical Manager','Quality Manager')?`<button class="btn" onclick="issueCoa('${id}')">Issue COA</button>`:''}`)+`
+ <div class="grid2"><div class="panel"><h2>Details</h2><div class="qr"><img src="${d.qr}" width="110" height="110" alt="QR label"><dl class="kv">${['Status','Priority','Received','Due','Assigned To','Location','Tests','Description','Registered By'].map(k=>`<dt>${k}</dt><dd>${statusish(k)?tag(s[k]):esc(s[k])||'—'}</dd>`).join('')}</dl></div><p class="sub" style="margin:12px 0 0">The QR code encodes the verification link for this sample. Print it for the container label.</p></div>
+ <div class="panel"><h2>Chain of custody</h2><table><tr><th>When</th><th>From</th><th>To</th><th>Action</th><th>Condition</th></tr>${d.coc.map(c=>`<tr><td>${c[0]}</td><td>${esc(c[2])}</td><td>${esc(c[3])}</td><td>${tag(c[4])}</td><td>${esc(c[5])}${c[6]?'<br><small class="sub">'+esc(c[6])+'</small>':''}</td></tr>`).join('')}</table></div></div>
+ <div class="panel"><h2>Results<small>${d.results.length}</small></h2>${d.results.length?`<div class="wrap"><table><tr><th>Method</th><th class="num">Result</th><th>Unit</th><th>± U</th><th>LOD</th><th>Limit</th><th>Conclusion</th><th>QC</th><th>Workflow</th></tr>${d.results.map(r=>`<tr><td>${r.Method}</td><td class="num">${r.Result}</td><td>${r.Unit}</td><td>${r['Uncertainty (±)']}</td><td>${r.LOD}</td><td>${r['Spec Limit']||'—'}</td><td>${tag(r.Conclusion)}</td><td>${tag(r['QC Status'])}</td><td>${tag(r.Status)}</td></tr>`).join('')}</table></div>`:'<div class="empty">No results yet. Create a worksheet in Testing & Results.</div>'}</div>
+ ${d.reports.length?`<div class="panel"><h2>Certificates</h2><table><tr><th>COA</th><th>Rev</th><th>Issued</th><th>Signatory</th><th>Status</th><th></th></tr>${d.reports.map(r=>`<tr><td>${r['COA ID']}</td><td>${r.Revision}</td><td>${r.Issued}</td><td>${esc(r.Signatory)}</td><td>${tag(r.Status)}</td><td>${r['File URL']?`<a href="${r['File URL']}" target="_blank">PDF</a>`:''}</td></tr>`).join('')}</table></div>`:''}`;}
+function cocForm(id){openModal('Transfer custody — '+id,field('To','',{select:['Sample reception','Lab 1 – Prep','Lab 2 – Metals','Lab 3 – Chromatography','Micro Lab','Cold store','Archive','Client return','Waste']})+field('Action','Transferred',{select:['Transferred','Stored','Returned to client','Disposed']})+field('Condition','Acceptable',{select:['Acceptable','Damaged','Leaking','Above temperature']})+field('Notes',''),async v=>{await run('cocTransfer',id,v.To,v.Action,v.Condition,v.Notes);toast('Custody updated');viewSample(id);},'Record transfer');}
+
+// ---------------------------------------------------------------- Testing & results
+async function renderTesting(){main().innerHTML=head('Testing & Results','Worksheets, result entry with uncertainty and QC status',`<button class="btn ghost" onclick="worksheetForm()">New worksheet</button><button class="btn" onclick="resultForm()">Enter result</button>`)+tabsHtml()+await tableHtml(tab);drawRows(tab);
+ if(tab==='Results'){const d=tableData,si=d.headers.indexOf('Status');document.querySelectorAll('#tbl tbody tr').forEach((tr,i)=>{const r=d.rows.find(x=>x[0]===tr.cells[0]?.textContent);if(r&&r[si]==='Needs Correction'){tr.cells[si].innerHTML+=` <button class="btn sm" onclick="correctForm('${r[0]}')">Correct</button>`;}});}
+ if(tab==='Worksheets')document.querySelectorAll('#tbl tbody tr').forEach(tr=>{const r=tableData.rows.find(x=>x[0]===tr.cells[0]?.textContent);if(r&&r[5]!=='Complete')tr.cells[5].innerHTML+=` <button class="btn sm ghost" onclick="event.stopPropagation();run('finishWorksheet','${r[0]}').then(()=>{toast('Worksheet complete');load()},fail)">Mark complete</button>`;});}
+function worksheetForm(){openModal('New worksheet',field('Method','',{select:ctx.methods.map(m=>m.Code)})+field('Analyst',ctx.name,{select:ctx.staff,blank:1})+field('Sample IDs','')+field('Equipment','',{select:ctx.equipment,blank:1})+field('Reagent Lots','')+`<div class="hint">Comma-separate sample IDs and reagent lots. Listed samples move to In Progress; lots are linked for traceability.</div>`,async v=>{const id=await run('createWorksheet',{method:v.Method,analyst:v.Analyst,samples:v['Sample IDs'],equipment:v.Equipment,lots:v['Reagent Lots']});toast('Created '+id);go('testing','Worksheets');},'Create');}
+function resultForm(sample){openModal('Enter result',field('Sample ID',sample||'')+field('Method','',{select:ctx.methods.map(m=>m.Code)})+field('Result','')+field('Comment','')+`<div class="hint" id="mhint"></div>`,async v=>{const r=await run('enterResult',{sample:v['Sample ID'],method:v.Method,result:v.Result,comment:v.Comment});toast(`${r.id}: ${r.conclusion}, ±${r.uncertainty}, ${r.qc}`);go('testing','Results');},'Save result');
+ const sel=document.querySelector('[data-f="Method"]');const upd=()=>{const m=ctx.methods.find(x=>x.Code===sel.value);$('mhint').textContent=m?`${m.Name}: unit ${m.Unit}, LOD ${m.LOD}, uncertainty ${m['Uncertainty %']}% (k=2)${m['Spec Limit']?', limit '+m['Spec Limit']:''}. Conclusion and QC status are set automatically.`:'';};sel.onchange=upd;upd();}
+function correctForm(id){openModal('Correct result '+id,field('New result','')+field('Comment','')+`<div class="hint">Uncertainty and conclusion are recalculated and the result returns to the review queue.</div>`,async v=>{await run('correctResult',id,v['New result'],v.Comment);toast('Resubmitted');load();},'Resubmit');}
+
+// ---------------------------------------------------------------- Review & approval
+async function renderReview(){const q=await run('getReviewQueue');const groups={Entered:[],Reviewed:[],'Needs Correction':[]};q.items.forEach(r=>groups[r.Status].push(r));
+ const canReview=can('Reviewer','Technical Manager','Quality Manager'),canApprove=can('Technical Manager');
+ const row=r=>`<tr><td>${r['Result ID']}</td><td><a href="#" onclick="viewSample('${r['Sample ID']}');return false">${r['Sample ID']}</a></td><td>${r.Method}</td><td class="num">${r.Result} ${r.Unit}</td><td>± ${r['Uncertainty (±)']}</td><td>${tag(r.Conclusion)}</td><td>${tag(r['QC Status'])}</td><td>${esc(r.Analyst)}</td><td>${esc(r.Comment)}</td><td style="white-space:nowrap">
+  ${r.Status==='Entered'&&canReview?`<button class="btn sm" onclick="act('${r['Result ID']}','Review')">Review</button> `:''}${r.Status==='Reviewed'&&canApprove?`<button class="btn sm" onclick="act('${r['Result ID']}','Approve')">Approve</button> `:''}${r.Status!=='Needs Correction'&&canReview?`<button class="btn sm ghost" onclick="sendBack('${r['Result ID']}')">Needs correction</button>`:''}${r.Status==='Needs Correction'?`<button class="btn sm ghost" onclick="correctForm('${r['Result ID']}')">Correct</button>`:''}</td></tr>`;
+ const block=(title,items,note)=>`<div class="panel"><h2>${title}<small>${items.length}</small></h2>${note?`<p class="sub" style="margin:0 0 10px">${note}</p>`:''}${items.length?`<div class="wrap"><table><tr><th>Result</th><th>Sample</th><th>Method</th><th class="num">Value</th><th>U</th><th>Conclusion</th><th>QC</th><th>Analyst</th><th>Comment</th><th></th></tr>${items.map(row).join('')}</table></div>`:'<div class="empty">Queue is empty.</div>'}</div>`;
+ main().innerHTML=head('Review & Approval',`Analyst → Reviewer → Technical Manager. You are: ${esc(q.role)}`)+block('Step 1 — Awaiting technical review',groups.Entered,'Reviewer checks calculations, QC and uncertainty. Analysts cannot review their own results.')+block('Step 2 — Awaiting approval',groups.Reviewed,'Technical Manager approves for release. When all results on a sample are approved the sample becomes ready for COA.')+block('Sent back for correction',groups['Needs Correction'],'Analyst corrects and resubmits; the result restarts at step 1.');}
+async function act(id,action){try{await run('reviewAction',id,action,'');toast(`${id} ${action.toLowerCase()}ed`);load();}catch(e){fail(e);}}
+function sendBack(id){openModal('Send back for correction — '+id,field('Comment','')+`<div class="hint">Tell the analyst what to fix. The comment is stored on the result and in the audit trail.</div>`,async v=>{if(!v.Comment)throw new Error('A comment is required');await run('reviewAction',id,'Needs Correction',v.Comment);toast('Sent back');load();},'Send back');}
+
+// ---------------------------------------------------------------- COA
+async function renderCoa(){const s=await run('getSheet','Samples');const ready=s.rows.filter(r=>r[7]==='Approved');
+ main().innerHTML=head('COA / Reports','PDF certificates saved to Drive with revision history and QR verification')+`<div class="panel"><h2>Ready to issue<small>${ready.length} approved samples</small></h2>${ready.length?`<table><tr><th>Sample</th><th>Client</th><th>Type</th><th>Due</th><th></th></tr>${ready.map(r=>`<tr><td><a href="#" onclick="viewSample('${r[0]}');return false">${r[0]}</a></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${r[5]}</td><td>${can('Technical Manager','Quality Manager')?`<button class="btn sm" onclick="issueCoa('${r[0]}')">Issue COA</button>`:'<span class="sub">Technical Manager issues</span>'}</td></tr>`).join('')}</table>`:'<div class="empty">No approved samples waiting. Approve results in Review & Approval first.</div>'}</div>`+await tableHtml('Reports',{title:'Issued certificates'});drawRows('Reports');
+ document.querySelectorAll('#tbl tbody tr').forEach(tr=>{const r=tableData.rows.find(x=>x[0]===tr.cells[0]?.textContent);if(r&&r[6]==='Issued'&&can('Technical Manager','Quality Manager'))tr.cells[6].innerHTML+=` <button class="btn sm ghost" onclick="issueCoa('${r[1]}',true)">Revise</button>`;});}
+function issueCoa(sampleId,revise){openModal((revise?'Revise':'Issue')+' COA — '+sampleId,(revise?field('Reason',''):'')+`<div class="hint">Generates a PDF in the "${esc(ctx.settings['COA Folder']||'LIMS COAs')}" Drive folder, signed by ${esc(ctx.settings.Signatory||ctx.name)}, with a QR verification code.${revise?' The previous revision is marked Superseded.':''}</div>`,async v=>{if(revise&&!v.Reason)throw new Error('A reason is required for a revision');const r=await run('generateCOA',sampleId,v.Reason||'');toast(`${r.coaId} rev ${r.revision} issued`);window.open(r.url,'_blank');go('coa');},revise?'Issue revision':'Issue');}
+
+// ---------------------------------------------------------------- QC
+async function renderQc(){const codes=ctx.methods.map(x=>x.Code);if(!extra.qcMethod)extra.qcMethod=codes[0];const m=extra.qcMethod;const st=m==='All'?{n:0,points:[]}:await run('qcStats',m);const qcTabs=`<div class="tabs" style="flex-wrap:wrap">${['All'].concat(codes).map(c=>`<button class="tab ${c===m?'on':''}" onclick="extra.qcMethod='${c}';load()">${c}</button>`).join('')}</div>`;
+ let chart='<div class="empty">Need at least 2 CRM/control points for statistics.</div>';
+ if(st.n>=2){const W=700,H=220,pad=40,vals=st.points.map(p=>p.value),lo=Math.min(st.lcl,...vals),hi=Math.max(st.ucl,...vals),y=v=>H-pad-(v-lo)/(hi-lo||1)*(H-2*pad),x=i=>pad+i*(W-2*pad)/Math.max(1,st.n-1);const flagged=new Set(st.flags.map(f=>f.i));
+  const line=(v,c,l)=>`<line x1="${pad}" x2="${W-pad}" y1="${y(v)}" y2="${y(v)}" stroke="${c}" stroke-dasharray="4 4"/><text x="${W-pad+4}" y="${y(v)+4}" font-size="10" fill="${c}">${l}</text>`;
+  chart=`<svg viewBox="0 0 ${W+30} ${H}" style="width:100%;max-width:820px;font-family:inherit">${line(st.ucl,'#B23A3A','+3s')}${line(st.uwl,'#B7791F','+2s')}${line(st.mean,'#2A8A7C','mean')}${line(st.lwl,'#B7791F','-2s')}${line(st.lcl,'#B23A3A','-3s')}<polyline fill="none" stroke="#1B2A47" stroke-width="1.5" points="${st.points.map((p,i)=>x(i)+','+y(p.value)).join(' ')}"/>${st.points.map((p,i)=>`<circle cx="${x(i)}" cy="${y(p.value)}" r="4" fill="${flagged.has(i)?'#B23A3A':'#1B2A47'}"><title>${p.id} ${p.date}: ${p.value}${flagged.has(i)?' — '+st.flags.filter(f=>f.i===i).map(f=>f.rule).join(', '):''}</title></circle>`).join('')}<text x="${pad}" y="${H-8}" font-size="10" fill="#6B7686">${st.points[0].date}</text><text x="${W-pad}" y="${H-8}" font-size="10" fill="#6B7686" text-anchor="end">${st.points[st.n-1].date}</text></svg>
+  <div class="stats"><span>n <b>${st.n}</b></span><span>mean <b>${st.mean.toFixed(3)}</b></span><span>SD <b>${st.sd.toFixed(3)}</b></span><span>CV <b>${st.cv.toFixed(2)}%</b></span><span>UCL/LCL <b>${st.ucl.toFixed(2)} / ${st.lcl.toFixed(2)}</b></span><span>Westgard flags <b>${st.flags.length?st.flags.map(f=>f.rule+' @ '+st.points[f.i].date).join('; '):'none'}</b></span></div>`;}
+ const mObj=ctx.methods.find(x=>x.Code===m);
+ main().innerHTML=head('Quality Control','Blanks, duplicates, CRMs, proficiency tests and control charts — one tab per method',`<button class="btn" onclick="qcForm()">Record QC</button>`)+qcTabs+(m==='All'?'':`<div class="panel"><h2>Control chart — ${m}<small>${mObj?esc(mObj.Name):''} · CRM / control results, Shewhart limits</small></h2>${chart}</div>`)+ioBar('QC',m)+await tableHtml('QC',{title:m==='All'?'All QC records':m+' records',noAdd:1});
+ if(m!=='All')tableData.rows=tableData.rows.filter(r=>r[2]===m);drawRows('QC');document.querySelector('#tbl').closest('.panel').querySelector('h2 small').textContent=tableData.rows.length+' records';}
+function qcForm(){openModal('Record QC result',field('Method',extra.qcMethod==='All'?'':extra.qcMethod||'',{select:ctx.methods.map(m=>m.Code)})+field('Type','CRM',{select:['Blank','Duplicate','CRM','Control','Spike','PT']})+field('Reference','')+field('Expected','')+field('Measured','')+field('Unit','')+field('Date',new Date().toISOString().slice(0,10))+`<div class="hint">Pass/Warning/Fail is judged automatically (±10% / ±20% of expected; blanks must be ≤ expected). A Fail raises an NCR automatically.</div>`,async v=>{const r=await run('addQc',{method:v.Method,type:v.Type,reference:v.Reference,expected:v.Expected,measured:v.Measured,unit:v.Unit,date:v.Date});toast(`${r.id}: ${r.result}`);load();},'Save');}
+
+// ---------------------------------------------------------------- Documents
+async function renderDocs(){const acks=await run('docAckStatus');main().innerHTML=head('Documents','SOP version control and staff acknowledgement',can('Quality Manager')?`<button class="btn" onclick="versionForm()">Issue new version</button>`:'')+`<div class="panel"><h2>Acknowledgement status<small>effective documents requiring read-and-sign</small></h2><table><tr><th>Document</th><th>Version</th><th style="width:30%">Staff acknowledged</th><th>You</th></tr>${acks.map(a=>`<tr><td>${a.id} — ${esc(a.title)}</td><td>${a.version}</td><td>${a.acked}/${a.total}<div class="prog"><i style="width:${a.total?a.acked/a.total*100:0}%"></i></div></td><td>${a.mine?tag('Acknowledged'):`<button class="btn sm" onclick="run('acknowledgeDoc','${a.id}').then(()=>{toast('Acknowledged');load()},fail)">Acknowledge v${a.version}</button>`}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">No documents need acknowledgement.</td></tr>'}</table></div>`+tabsHtml()+await tableHtml(tab);drawRows(tab);}
+function versionForm(){openModal('Issue new document version',field('Doc ID','',{select:tableData&&tableData.headers[0]==='Doc ID'?tableData.rows.map(r=>r[0]):[]})+field('Version','')+field('Summary','')+`<div class="hint">Sets the effective date to today, review due in 12 months, and resets acknowledgements for the new version.</div>`,async v=>{await run('newDocVersion',v['Doc ID'],v.Version,v.Summary);toast('Version issued');load();},'Issue');}
+
+// ---------------------------------------------------------------- Personnel
+async function renderPersonnel(){const mx=await run('competencyMatrix');main().innerHTML=head('Personnel','Competency matrix and training records')+`<div class="panel"><h2>Competency matrix<small>red outline = review overdue</small></h2><div class="wrap"><table class="matrix"><tr><th>Staff</th>${mx.methods.map(m=>`<th>${m}</th>`).join('')}<th>Training</th></tr>${mx.staff.map(s=>`<tr><td><b>${esc(s.name)}</b><br><small class="sub">${esc(s.role)}</small></td>${mx.methods.map(m=>{const c=s.comp[m];return`<td>${c?`<span class="lvl ${c.level}${c.overdue?' over':''}" title="Review due ${c.due||'—'}">${c.level}</span>`:''}</td>`;}).join('')}<td>${s.training} records${s.expiring?'<br>'+tag(s.expiring+' expiring'):''}</td></tr>`).join('')}</table></div></div>`+tabsHtml()+await tableHtml(tab);drawRows(tab);}
+
+function pwForm(){openModal('Change password',field('Current password','').replace('<input','<input type="password"')+field('New password','').replace('<input','<input type="password"'),async v=>{await run('changePassword',v['Current password'],v['New password']);toast('Password updated');},'Update');}
+async function approve(email,portal){try{const sel=$('role_'+email.replace(/[^a-z0-9]/gi,'_'));await run('approveUser',email,portal==='Client'?'Client':sel.value);toast('Approved '+email);load();}catch(e){fail(e);}}
+function resetPwForm(email){openModal('Reset password — '+email,field('New password','').replace('<input','<input type="password"')+`<div class="hint">The user's existing sessions are ended. Share the new password securely.</div>`,async v=>{await run('resetPassword',email,v['New password']);toast('Password reset');},'Reset');}
+// ---------------------------------------------------------------- Admin
+async function renderAdmin(){if(!can('Quality Manager')){main().innerHTML=head('Admin')+`<div class="panel"><p>Admin is available to the Admin and Quality Manager roles. Your role is ${esc(ctx.role)}.</p></div>`;return;}
+ const pend=tab==='Users'&&can('Admin')?await run('pendingRegistrations'):[];
+ const pendHtml=tab==='Users'?`<div class="panel"><h2>Pending registrations<small>${pend.length}</small></h2>${pend.length?`<table><tr><th>Name</th><th>Email</th><th>Portal</th><th>Organisation / role</th><th></th></tr>${pend.map(u=>`<tr><td>${esc(u.name)}</td><td>${esc(u.email)}</td><td>${tag(u.portal)}</td><td>${u.portal==='Client'?esc(u.client):`<select id="role_${esc(u.email).replace(/[^a-z0-9]/gi,'_')}">${opts(ctx.roles.filter(r=>r!=='Client'&&r!=='Admin'),'Analyst')}</select>`}</td><td style="white-space:nowrap"><button class="btn sm" onclick="approve('${esc(u.email)}','${u.portal}')">Approve</button> <button class="btn sm ghost" onclick="run('rejectUser','${esc(u.email)}').then(()=>{toast('Rejected');load()},fail)">Reject</button></td></tr>`).join('')}</table>`:'<div class="empty">No accounts waiting for approval.</div>'}</div>`:'';
+ main().innerHTML=head('Admin','Users and roles, methods and pricing, laboratory settings')+tabsHtml()+pendHtml+await tableHtml(tab)+(tab==='Users'?`<div class="panel"><h2>Portals and access</h2><p><b>Admin</b> portal: full system. <b>Staff</b> portal: role decides what the user can do (Analyst enters results; Reviewer reviews; Technical Manager approves and issues COAs; Quality Manager manages documents, NCRs and admin). <b>Client</b> portal: the <code>Client</code> column must match a name in Clients; they see only their own samples, approved results and certificates. Passwords are hashed; enter a new one when adding or editing a user to set it, leave blank to keep it.</p></div>`:'')+(tab==='Settings'?`<div class="panel"><h2>Notes</h2><p>Set <code>Web App URL</code> to this deployment's URL so QR codes on COAs and sample labels resolve to the verification page. Use the deployment guide for database setup.</p></div>`:'');drawRows(tab);if(tab==='Users'&&can('Admin'))document.querySelectorAll('#tbl tbody tr').forEach(tr=>{const e=tr.cells[0]?.textContent;if(e)tr.cells[6].innerHTML+=` <button class="btn sm ghost" onclick="event.stopPropagation();resetPwForm('${e}')">Reset</button>`;});}
+
+// ---------------------------------------------------------------- Boot
+(async()=>{try{ctx=await run('getContext');if(!LimsAPI.checkPortal(ctx.portal))return;document.querySelectorAll('[data-lab-name]').forEach(el=>el.textContent=ctx.settings['Lab Name']||'Laboratory');$('labName').textContent=ctx.settings['Lab Name']||'Laboratory';document.title=(ctx.settings['Lab Name']||'LIMS')+' — LIMS';renderNav();load();}catch(e){main().innerHTML=`<div class="panel"><h2>Setup needed</h2><p>${esc(e.message||e)}</p><p>Check the API configuration and your account with the laboratory administrator.</p></div>`;}})();
+</script>
+</body>
+</html>
